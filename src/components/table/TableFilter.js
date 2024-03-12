@@ -4,8 +4,9 @@ export class TableFilter {
       if (!rootElement) {
          throw new Error('root element is not specified');
       }
-      const p = document.createElement('p');
-      p.innerText = 'filter';
-      rootElement.appendChild(p);
+      const input = document.createElement('input');
+      input.className = 'control';
+      input.placeholder = 'Filter by company name'
+      rootElement.appendChild(input);
    }
 }

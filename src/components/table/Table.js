@@ -57,15 +57,21 @@ export class Table {
       filterComponent.render(rootElement);
 
       const tableElement = document.createElement('table');
-      const tBodyElement = document.createElement('tbody');
+      const captionElement = document.createElement('caption');
       const tHeadElement = document.createElement('thead');
+      const tBodyElement = document.createElement('tbody');
       const headerRowEl = document.createElement('tr');
       tHeadElement.appendChild(headerRowEl);
-      tableElement.append(tHeadElement, tBodyElement);
+      tableElement.append(captionElement, tHeadElement, tBodyElement);
       tableElement.className = 'table';
+      captionElement.innerText = 'Page 1 of 10'
 
       for (const header of this.tableHeaders) {
-         this.#renderTableCell(header[0].toUpperCase() + header.slice(1), headerRowEl, 'th');
+         this.#renderTableCell(
+            header[0].toUpperCase() + header.slice(1),
+            headerRowEl,
+            'th'
+         );
       }
 
       for (const record of this.records) {
