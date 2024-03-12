@@ -9,8 +9,18 @@ const paginationComponent = new TablePagination();
 export class Table {
    constructor(records, prices) {
       this.prices = prices;
+      this.tableHeaders = this.#createTableHeaders(prices);
       this.records = this.#getValidRecords(records);
-      this.tableHeaders = ['company', ...Object.keys(prices)];
+      console.log(this.records);
+   }
+
+   #createTableHeaders(prices) {
+      const headers = [];
+      Object.keys(prices).forEach(product => {
+         headers.push(product + '(шт)');
+         headers.push(product + '(руб)');
+      });
+      return headers;
    }
 
    #getValidRecords(records) {
@@ -20,8 +30,8 @@ export class Table {
       );
       const transformedRecords = this.#transformRecords(filteredData);
       return transformedRecords.map(record => {
-         Object.keys(this.prices).forEach(product => {
-            record.products[product] ??= 0;
+         this.tableHeaders.forEach(product => {
+            record.data[product] ??= 0;
          });
          return record;
       });
@@ -32,14 +42,24 @@ export class Table {
          const { company, product, count } = record;
 
          const reducedRecord = accum.find(record => record.company === company);
+         const recordHeader = this.tableHeaders.findIndex(header =>
+            header.startsWith(product)
+         );
+         // FIXME: please
          if (reducedRecord) {
-            reducedRecord.products[product] =
-               (reducedRecord.products[product] || 0) + count;
+            reducedRecord.data[this.tableHeaders[recordHeader]] =
+               (reducedRecord.data[this.tableHeaders[recordHeader]] || 0) + count;
+            reducedRecord.data[this.tableHeaders[recordHeader + 1]] =
+               (reducedRecord.data[this.tableHeaders[recordHeader] + 1] || 0) +
+               +(count * this.prices[product]).toFixed(2);
          } else {
             accum.push({
                company,
-               products: {
-                  [product]: count
+               data: {
+                  [this.tableHeaders[recordHeader]]: count,
+                  [this.tableHeaders[recordHeader + 1]]: +(
+                     count * this.prices[product]
+                  ).toFixed(2)
                }
             });
          }
@@ -64,8 +84,9 @@ export class Table {
       tHeadElement.appendChild(headerRowEl);
       tableElement.append(captionElement, tHeadElement, tBodyElement);
       tableElement.className = 'table';
-      captionElement.innerText = 'Page 1 of 10'
+      captionElement.innerText = 'Page 1 of 10';
 
+      this.#renderTableCell('Компания', headerRowEl, 'th');
       for (const header of this.tableHeaders) {
          this.#renderTableCell(
             header[0].toUpperCase() + header.slice(1),
@@ -77,8 +98,8 @@ export class Table {
       for (const record of this.records) {
          const rowEl = document.createElement('tr');
          this.#renderTableCell(record.company, rowEl);
-         Object.keys(this.prices).forEach(product => {
-            this.#renderTableCell(record.products[product], rowEl);
+         this.tableHeaders.forEach(product => {
+            this.#renderTableCell(record.data[product], rowEl);
          });
          tBodyElement.appendChild(rowEl);
       }

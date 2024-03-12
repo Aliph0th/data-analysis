@@ -6,7 +6,7 @@ const RECORDS_N = 10;
 const prices = PRODUCT_PRICES;
 const records = generateData(RECORDS_N);
 
-console.table(records);
+console.log(records);
 console.log(prices);
 
 const tableComponent = new Table(records, prices);

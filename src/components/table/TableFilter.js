@@ -6,7 +6,7 @@ export class TableFilter {
       }
       const input = document.createElement('input');
       input.className = 'control';
-      input.placeholder = 'Filter by company name'
+      input.placeholder = 'Filter by company name';
       rootElement.appendChild(input);
    }
 }
