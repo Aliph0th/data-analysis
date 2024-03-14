@@ -2,7 +2,7 @@
 import { Table } from './components/table/Table.js';
 import { PRODUCT_PRICES, generateData } from './generate.js';
 
-const RECORDS_N = 10;
+const RECORDS_N = 15;
 const prices = PRODUCT_PRICES;
 const records = generateData(RECORDS_N);
 
