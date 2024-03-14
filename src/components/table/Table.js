@@ -9,19 +9,21 @@ const paginationComponent = new TablePagination();
 export class Table {
    constructor(records, prices) {
       this.prices = prices;
-      this.tableHeaders = this.#createTableHeaders(prices);
+      this.tableHeaders = this.#createTableHeaders();
       this.records = this.#getValidRecords(records);
+      this.totalMoney = this.#calculateTotalMoney();
+      console.log(this.totalMoney);
       this.pageText = 'Page 1 of 10';
       console.log(this.records);
    }
 
-   #createTableHeaders(prices) {
+   #createTableHeaders() {
       const headers = [];
-      Object.keys(prices).forEach(product => {
+      Object.keys(this.prices).forEach(product => {
          headers.push(product + '(шт)');
          headers.push(product + '(руб)');
       });
-      return headers;
+      return [...headers, 'Итого(руб)'];
    }
 
    #getValidRecords(records) {
@@ -43,18 +45,18 @@ export class Table {
          const { company, product, count } = record;
 
          const reducedRecord = accum.find(record => record.company === company);
-         const additionPrice = +(count * this.prices[product]).toFixed(2);
+         const money = +(count * this.prices[product]).toFixed(2);
          if (reducedRecord) {
             reducedRecord.products[product] = this.#calculateProductData(
                count,
-               additionPrice,
+               money,
                reducedRecord.products[product] || [0, 0]
             );
          } else {
             accum.push({
                company,
                products: {
-                  [product]: this.#calculateProductData(count, additionPrice)
+                  [product]: this.#calculateProductData(count, money)
                }
             });
          }
@@ -64,8 +66,18 @@ export class Table {
       return transformedData;
    }
 
-   #calculateProductData(count, price, previousData = [0, 0]) {
-      return [previousData[0] + count, +(previousData[1] + price).toFixed(2)];
+   #calculateProductData(count, money, previousData = [0, 0]) {
+      return [previousData[0] + count, +(previousData[1] + money).toFixed(2)];
+   }
+
+   #calculateTotalMoney() {
+      return this.records.reduce((accum, record) => {
+         const { company, products } = record;
+         accum[company] = Object.values(products).reduce((money, productData) => {
+            return +(money + productData[1]).toFixed(2);
+         }, 0);
+         return accum;
+      }, {});
    }
 
    render(rootElement) {
@@ -134,6 +146,12 @@ export class Table {
                })
             );
          });
+         rowEl.appendChild(
+            this.#createElement({
+               type: 'td',
+               innerText: this.totalMoney[record.company]
+            })
+         );
          tBodyElement.appendChild(rowEl);
       }
    }
