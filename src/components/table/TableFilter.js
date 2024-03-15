@@ -1,12 +1,20 @@
 'use strict';
-export class TableFilter {
+
+import { Component } from '../Component.js';
+
+export class TableFilter extends Component {
+   constructor() {
+      super();
+   }
    render(rootElement) {
       if (!rootElement) {
          throw new Error('root element is not specified');
       }
-      const input = document.createElement('input');
-      input.className = 'control';
-      input.placeholder = 'Filter by company name';
+      const input = this.createElement({
+         type: 'input',
+         classNames: ['control'],
+         attributes: { placeholder: 'Filter by company name' }
+      });
       rootElement.appendChild(input);
    }
 }

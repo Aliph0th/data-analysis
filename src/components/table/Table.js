@@ -1,20 +1,20 @@
 'use strict';
 
+import { Component } from '../Component.js';
 import { TableFilter } from './TableFilter.js';
 import { TablePagination } from './TablePagination.js';
 
 const filterComponent = new TableFilter();
 const paginationComponent = new TablePagination();
 
-export class Table {
+export class Table extends Component {
    constructor(records, prices) {
+      super();
       this.prices = prices;
       this.tableHeaders = this.#createTableHeaders();
       this.records = this.#getValidRecords(records);
       this.totalMoney = this.#calculateTotalMoney();
-      console.log(this.totalMoney);
       this.pageText = 'Page 1 of 10';
-      console.log(this.records);
    }
 
    #createTableHeaders() {
@@ -87,17 +87,17 @@ export class Table {
 
       filterComponent.render(rootElement);
 
-      const tHeadRow = this.#createElement({
+      const tHeadRow = this.createElement({
          type: 'tr'
       });
-      const tBodyElement = this.#createElement({
+      const tBodyElement = this.createElement({
          type: 'tbody'
       });
-      const tableElement = this.#createElement({
+      const tableElement = this.createElement({
          type: 'table',
          classNames: ['table'],
          children: [
-            this.#createElement({
+            this.createElement({
                type: 'thead',
                children: [tHeadRow]
             }),
@@ -105,12 +105,12 @@ export class Table {
          ]
       });
       rootElement.append(
-         this.#createElement({
+         this.createElement({
             type: 'p',
             classNames: ['page_title'],
             innerText: this.pageText
          }),
-         this.#createElement({
+         this.createElement({
             type: 'div',
             classNames: ['table_container'],
             children: [tableElement]
@@ -121,7 +121,7 @@ export class Table {
 
       for (const header of ['Компания', ...this.tableHeaders]) {
          tHeadRow.appendChild(
-            this.#createElement({
+            this.createElement({
                type: 'th',
                innerText: header
             })
@@ -142,23 +142,15 @@ export class Table {
    }
 
    #buildTableRow(rowData) {
-      const rowElement = this.#createElement({ type: 'tr' });
+      const rowElement = this.createElement({ type: 'tr' });
       rowData.forEach(x => {
          rowElement.appendChild(
-            this.#createElement({
+            this.createElement({
                type: 'td',
                innerText: x
             })
          );
       });
       return rowElement;
-   }
-
-   #createElement({ type, classNames = [], innerText = '', children = [] }) {
-      const element = document.createElement(type);
-      element.className = classNames.join(' ');
-      element.innerText = innerText;
-      element.append(...children);
-      return element;
    }
 }
