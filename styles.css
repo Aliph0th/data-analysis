@@ -26,36 +26,40 @@ body {
    min-width: 400px;
    width: 100%;
    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+   border: 1px solid #ccc;
 }
 .table thead {
-   background-color: #2cb498;
-   color: #ffffff;
+   background-color: #6c7ae0;
+   color: #fff;
 }
 .table th,
 .table td {
-   padding: 0.75rem 1rem;
-   border: 1px solid #d4d4d4;
+   padding: 0.4rem 0.7rem 0.4rem;
+   border-bottom: 1px solid #98a0e0;
 }
 .table th:first-child {
    position: sticky;
    left: 0;
-   background-color: #2cb498;
+   background-color: #6c7ae0;
 }
 .table tr:nth-of-type(even) {
-   background-color: #e8e8e8;
+   background-color: #f8f6ff;
+}
+.table tbody tr:hover td {
+   background-color: #d9d2f1;
 }
 .table td:first-child {
    position: sticky;
    left: 0;
-   background: #ccc;
+   background: #6c7ae0 !important;
+   color: #fff;
    font-weight: bold;
 }
-.table td:nth-child(4n + 2),
-.table td:nth-child(4n + 3) {
-   background-color: #e8e8e8;
+.table td:nth-child(2n + 1) {
+   border-right: 1px solid #98a0e0;
 }
-.table tbody tr:hover td {
-   background: #ccc;
+.table th:nth-child(2n + 1) {
+   border-right: 1px solid #98a0e0;
 }
 
 .control {
@@ -67,7 +71,7 @@ body {
    transition: border 0.2s;
 }
 .control:focus {
-   border-color: #2cb498;
+   border-color: #6c7ae0;
 }
 
 .page_title {
@@ -82,7 +86,7 @@ body {
 
 .btn {
    padding: 0.5rem 1rem;
-   background-color: #2cb498;
+   background-color: #6c7ae0;
    border: none;
    border-radius: 5px;
    color: #fff;

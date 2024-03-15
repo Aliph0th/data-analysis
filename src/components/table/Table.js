@@ -129,31 +129,29 @@ export class Table {
       }
 
       for (const record of this.records) {
-         const rowEl = this.#createElement({ type: 'tr' });
-         rowEl.appendChild(
-            this.#createElement({
-               type: 'td',
-               innerText: record.company
-            })
-         );
+         const rowData = [record.company];
          Object.keys(this.prices).forEach(product => {
-            rowEl.append(
-               ...record.products[product].map(x => {
-                  return this.#createElement({
-                     type: 'td',
-                     innerText: x
-                  });
-               })
-            );
+            rowData.push(...record.products[product]);
          });
-         rowEl.appendChild(
+         const rowElement = this.#buildTableRow([
+            ...rowData,
+            this.totalMoney[record.company]
+         ]);
+         tBodyElement.appendChild(rowElement);
+      }
+   }
+
+   #buildTableRow(rowData) {
+      const rowElement = this.#createElement({ type: 'tr' });
+      rowData.forEach(x => {
+         rowElement.appendChild(
             this.#createElement({
                type: 'td',
-               innerText: this.totalMoney[record.company]
+               innerText: x
             })
          );
-         tBodyElement.appendChild(rowEl);
-      }
+      });
+      return rowElement;
    }
 
    #createElement({ type, classNames = [], innerText = '', children = [] }) {
