@@ -6,7 +6,6 @@ export const METRICS_NAMES = {
    MEDIAN: 'Медиана продаж'
 };
 export const EMPTY_METRIC = '–';
-
 export const EVENT_TYPES = {
    NEXT_PAGE: 'next_page',
    PREV_PAGE: 'prev_page',

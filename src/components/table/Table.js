@@ -10,7 +10,7 @@ import {
 } from '../../helpers.js';
 
 export class Table extends Component {
-   constructor(records, prices, products, parentID) {
+   constructor(records, prices, products, pageText, parentID) {
       super();
       this.parentID = parentID;
       this.prices = prices;
@@ -18,8 +18,7 @@ export class Table extends Component {
       this.records = records;
       this.tableHeaders = createTableHeaders(this.products);
       this.metrics = this.#calculateMetrics();
-      this.pageText = 'Page 1 of 10';
-      console.log(this.metrics);
+      this.pageText = pageText;
    }
 
    #calculateMetrics() {

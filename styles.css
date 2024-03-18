@@ -100,3 +100,6 @@ body {
 .btn:hover {
    background-color: #394395;
 }
+.btn[disabled] {
+   background-color: #a7abcc;
+}

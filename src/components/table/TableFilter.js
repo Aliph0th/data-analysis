@@ -4,8 +4,9 @@ import { Component } from '../../Component.js';
 import { EVENT_TYPES } from '../../constants.js';
 
 export class TableFilter extends Component {
-   constructor(parentID) {
+   constructor(filter, parentID) {
       super();
+      this.filter = filter;
       this.parentID = parentID;
    }
    #filterChanged = e => {
@@ -18,7 +19,7 @@ export class TableFilter extends Component {
       const input = this._createElement({
          type: 'input',
          classNames: ['control'],
-         attributes: { placeholder: 'Filter by company name' }
+         attributes: { placeholder: 'Filter by company name', value: this.filter }
       });
       rootElement.appendChild(input);
 
