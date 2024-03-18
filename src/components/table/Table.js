@@ -1,83 +1,52 @@
 'use strict';
 
-import { Component } from '../Component.js';
-import { TableFilter } from './TableFilter.js';
-import { TablePagination } from './TablePagination.js';
-
-const filterComponent = new TableFilter();
-const paginationComponent = new TablePagination();
+import { Component } from '../../Component.js';
+import { EMPTY_METRIC, METRICS_NAMES } from '../../constants.js';
+import {
+   createTableHeaders,
+   formatNumber,
+   getDataForMetrics,
+   median
+} from '../../helpers.js';
 
 export class Table extends Component {
-   constructor(records, prices) {
+   constructor(records, prices, products, parentID) {
       super();
+      this.parentID = parentID;
       this.prices = prices;
-      this.tableHeaders = this.#createTableHeaders();
-      this.records = this.#getValidRecords(records);
-      this.totalMoney = this.#calculateTotalMoney();
+      this.products = products;
+      this.records = records;
+      this.tableHeaders = createTableHeaders(this.products);
+      this.metrics = this.#calculateMetrics();
       this.pageText = 'Page 1 of 10';
+      console.log(this.metrics);
    }
 
-   #createTableHeaders() {
-      const headers = [];
-      Object.keys(this.prices).forEach(product => {
-         headers.push(product + '(шт)');
-         headers.push(product + '(руб)');
-      });
-      return [...headers, 'Итого(руб)'];
-   }
-
-   #getValidRecords(records) {
-      const filteredData = records.filter(
-         ({ company, product, count }) =>
-            company && product && count > 0 && Number.isInteger(count)
-      );
-      const transformedData = this.#transformRecords(filteredData);
-      return transformedData.map(record => {
-         Object.keys(this.prices).forEach(product => {
-            record.products[product] ||= [0, 0];
-         });
-         return record;
-      });
-   }
-
-   #transformRecords(records) {
-      const transformedData = records.reduce((accum, record) => {
-         const { company, product, count } = record;
-
-         const reducedRecord = accum.find(record => record.company === company);
-         const money = +(count * this.prices[product]).toFixed(2);
-         if (reducedRecord) {
-            reducedRecord.products[product] = this.#calculateProductData(
-               count,
-               money,
-               reducedRecord.products[product] || [0, 0]
-            );
-         } else {
-            accum.push({
-               company,
-               products: {
-                  [product]: this.#calculateProductData(count, money)
-               }
-            });
-         }
-
-         return accum;
-      }, []);
-      return transformedData;
-   }
-
-   #calculateProductData(count, money, previousData = [0, 0]) {
-      return [previousData[0] + count, +(previousData[1] + money).toFixed(2)];
-   }
-
-   #calculateTotalMoney() {
-      return this.records.reduce((accum, record) => {
-         const { company, products } = record;
-         accum[company] = Object.values(products).reduce((money, productData) => {
-            return +(money + productData[1]).toFixed(2);
-         }, 0);
+   #calculateMetrics() {
+      const mappedData = getDataForMetrics(this.records, this.products);
+      const maxMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
+         accum[key] = Math.max(...value);
          return accum;
       }, {});
+      const sumMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
+         accum[key] = formatNumber(value.reduce((sum, x) => sum + x, 0));
+         return accum;
+      }, {});
+      const avgMetric = Object.entries(mappedData).reduce((accum, [key]) => {
+         accum[key] = formatNumber(sumMetric[key] / this.records.length);
+         return accum;
+      }, {});
+      const medianMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
+         accum[key] = formatNumber(median(value));
+         return accum;
+      }, {});
+
+      return [
+         { name: METRICS_NAMES.MAX, data: maxMetric },
+         { name: METRICS_NAMES.SUM, data: sumMetric },
+         { name: METRICS_NAMES.AVG, data: avgMetric },
+         { name: METRICS_NAMES.MEDIAN, data: medianMetric }
+      ];
    }
 
    render(rootElement) {
@@ -85,72 +54,67 @@ export class Table extends Component {
          throw new Error('root element is not specified');
       }
 
-      filterComponent.render(rootElement);
-
-      const tHeadRow = this.createElement({
-         type: 'tr'
-      });
-      const tBodyElement = this.createElement({
-         type: 'tbody'
-      });
-      const tableElement = this.createElement({
+      const tHeadElement = this._createElement({ type: 'thead' });
+      const tBodyElement = this._createElement({ type: 'tbody' });
+      const tableElement = this._createElement({
          type: 'table',
          classNames: ['table'],
-         children: [
-            this.createElement({
-               type: 'thead',
-               children: [tHeadRow]
-            }),
-            tBodyElement
-         ]
+         children: [tHeadElement, tBodyElement]
       });
       rootElement.append(
-         this.createElement({
+         this._createElement({
             type: 'p',
             classNames: ['page_title'],
             innerText: this.pageText
          }),
-         this.createElement({
+         this._createElement({
             type: 'div',
             classNames: ['table_container'],
             children: [tableElement]
          })
       );
 
-      paginationComponent.render(rootElement);
+      this.#createRow(this.tableHeaders, tHeadElement, 'th');
 
-      for (const header of ['Компания', ...this.tableHeaders]) {
-         tHeadRow.appendChild(
-            this.createElement({
-               type: 'th',
-               innerText: header
-            })
+      for (const record of this.records) {
+         const rowData = this.products.reduce(
+            (accum, product) => {
+               accum.push(...Object.values(record.products[product]));
+               return accum;
+            },
+            [record.company]
+         );
+         this.#createRow(
+            [...rowData, record.totalMoney, record.purchasePercentage],
+            tBodyElement
          );
       }
 
-      for (const record of this.records) {
-         const rowData = [record.company];
-         Object.keys(this.prices).forEach(product => {
-            rowData.push(...record.products[product]);
+      for (const { name, data } of this.metrics) {
+         const rowData = [name];
+         this.products.forEach(product => {
+            rowData.push(data[product], EMPTY_METRIC);
          });
-         const rowElement = this.#buildTableRow([
-            ...rowData,
-            this.totalMoney[record.company]
-         ]);
-         tBodyElement.appendChild(rowElement);
+         this.#createRow(
+            [...rowData, data.totalMoney, data.purchasePercentage],
+            tBodyElement,
+            'td',
+            true
+         );
       }
    }
 
-   #buildTableRow(rowData) {
-      const rowElement = this.createElement({ type: 'tr' });
+   #createRow(rowData, parent, cellType = 'td', isMetric = false) {
+      const classNames = isMetric ? ['metric'] : [];
+      const rowElement = this._createElement({ type: 'tr', classNames });
       rowData.forEach(x => {
          rowElement.appendChild(
-            this.createElement({
-               type: 'td',
+            this._createElement({
+               type: cellType,
                innerText: x
             })
          );
       });
-      return rowElement;
+      parent.appendChild(rowElement);
    }
 }

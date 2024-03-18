@@ -1,8 +1,9 @@
+'use strict';
 export class Component {
    constructor() {
       this.id = Math.random().toString(36).substring(2, 10);
    }
-   createElement({
+   _createElement({
       type,
       classNames = [],
       innerText = '',
@@ -10,11 +11,9 @@ export class Component {
       attributes = {}
    }) {
       const element = document.createElement(type);
+      element.innerText = innerText;
       if (classNames.length) {
          element.className = classNames.join(' ');
-      }
-      if (innerText) {
-         element.innerText = innerText;
       }
       if (children.length) {
          element.append(...children);
