@@ -5,6 +5,7 @@ import { Table } from './table/Table.js';
 import { TableFilter } from './table/TableFilter.js';
 import { TablePagination } from './table/TablePagination.js';
 import { fillAggregatedData, transformRecords } from '../helpers.js';
+import { EVENT_TYPES } from '../constants.js';
 
 export class App extends Component {
    constructor(records, prices) {
@@ -18,6 +19,9 @@ export class App extends Component {
          new TablePagination(this.id)
       ];
       console.log(this.records);
+      window.addEventListener(this._event(EVENT_TYPES.FILTER_CHANGE, this.id), e =>
+         console.log(e.detail)
+      );
    }
 
    #getRecords(records) {

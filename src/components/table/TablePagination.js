@@ -1,13 +1,22 @@
 'use strict';
 
 import { Component } from '../../Component.js';
-import { RECORDS_PER_PAGE } from '../../constants.js';
+import { EVENT_TYPES, RECORDS_PER_PAGE } from '../../constants.js';
 
 export class TablePagination extends Component {
    constructor(parentID) {
       super();
       this.parentID = parentID;
    }
+   #nextBtnPressed = () => {
+      this._dispatch(EVENT_TYPES.NEXT_PAGE, this.parentID);
+   };
+   #backBtnPressed = () => {
+      this._dispatch(EVENT_TYPES.PREV_PAGE, this.parentID);
+   };
+   #paginationChanged = e => {
+      this._dispatch(EVENT_TYPES.PAGINATION_CHANGE, this.parentID, +e.target.value);
+   };
    render(rootElement) {
       if (!rootElement) {
          throw new Error('root element is not specified');
@@ -42,5 +51,9 @@ export class TablePagination extends Component {
             children: [btnBack, selectCountEl, btnNext]
          })
       );
+
+      btnNext.addEventListener('click', this.#nextBtnPressed);
+      btnBack.addEventListener('click', this.#backBtnPressed);
+      selectCountEl.addEventListener('change', this.#paginationChanged);
    }
 }

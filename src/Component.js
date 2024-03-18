@@ -23,4 +23,10 @@ export class Component {
       });
       return element;
    }
+   _event(name, id) {
+      return `${name}_${id}`;
+   }
+   _dispatch(eventName, id, detail) {
+      window.dispatchEvent(new CustomEvent(this._event(eventName, id), { detail }));
+   }
 }
