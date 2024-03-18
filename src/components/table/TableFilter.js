@@ -1,7 +1,8 @@
 'use strict';
 
 import { Component } from '../../Component.js';
-import { EVENT_TYPES } from '../../constants.js';
+import { DEBOUNCE_DELAY, EVENT_TYPES } from '../../constants.js';
+import { debounce } from '../../helpers.js';
 
 export class TableFilter extends Component {
    constructor(filter, parentID) {
@@ -23,6 +24,6 @@ export class TableFilter extends Component {
       });
       rootElement.appendChild(input);
 
-      input.addEventListener('input', this.#filterChanged);
+      input.addEventListener('input', debounce(this.#filterChanged, DEBOUNCE_DELAY));
    }
 }

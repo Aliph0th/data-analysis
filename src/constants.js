@@ -12,3 +12,4 @@ export const EVENT_TYPES = {
    PAGINATION_CHANGE: 'pagination_change',
    FILTER_CHANGE: 'filter_change'
 };
+export const DEBOUNCE_DELAY = 800;

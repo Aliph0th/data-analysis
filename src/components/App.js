@@ -21,10 +21,9 @@ export class App extends Component {
    }
 
    get #currentRecords() {
-      return this.records.slice(
-         this.page * this.pageOption,
-         (this.page + 1) * this.pageOption
-      );
+      return this.records
+         .slice(this.page * this.pageOption, (this.page + 1) * this.pageOption)
+         .filter(record => record.company.toLowerCase().includes(this.filterText));
    }
 
    get #pagesCount() {
@@ -39,7 +38,8 @@ export class App extends Component {
       });
 
       window.addEventListener(this._event(EVENT_TYPES.FILTER_CHANGE, this.id), e => {
-         this.filterText = e.detail;
+         this.filterText = e.detail.toLowerCase();
+         this.render();
       });
 
       window.addEventListener(this._event(EVENT_TYPES.NEXT_PAGE, this.id), () => {

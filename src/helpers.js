@@ -79,3 +79,11 @@ export const median = array => {
    const half = Math.floor(array.length / 2);
    return array.length % 2 ? array[half] : (array[half - 1] + array[half]) / 2;
 };
+
+export const debounce = (fn, ms) => {
+   let timeout;
+   return function () {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, arguments), ms);
+   };
+};
