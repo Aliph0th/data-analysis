@@ -5,7 +5,7 @@ import { Table } from './table/Table.js';
 import { TableFilter } from './table/TableFilter.js';
 import { TablePagination } from './table/TablePagination.js';
 import { fillAggregatedData, transformRecords } from '../helpers.js';
-import { EVENT_TYPES, RECORDS_PER_PAGE } from '../constants.js';
+import { EVENTS, RECORDS_PER_PAGE } from '../constants.js';
 
 export class App extends Component {
    constructor(records, prices, root) {
@@ -16,47 +16,51 @@ export class App extends Component {
       this.records = this.#getRecords(records);
       this.filterText = '';
       this.pageOption = RECORDS_PER_PAGE[0];
-      this.page = 0;
+      this.page = 1;
       this.#addListeners();
    }
 
    get #currentRecords() {
+      let start = (this.page - 1) * this.pageOption;
+      if (start > this.records.length) {
+         start = 0;
+      }
       return this.records
-         .slice(this.page * this.pageOption, (this.page + 1) * this.pageOption)
-         .filter(record => record.company.toLowerCase().includes(this.filterText));
+         .filter(record => record.company.toLowerCase().includes(this.filterText))
+         .slice(start, start + this.pageOption);
    }
 
    get #pagesCount() {
-      return Math.ceil(this.records.length / this.pageOption);
+      return Math.ceil(this.#currentRecords.length / this.pageOption);
    }
 
    #addListeners() {
-      // FIXME:
-      window.addEventListener(this._event(EVENT_TYPES.PAGINATION_CHANGE, this.id), e => {
+      this.#bindListener(EVENTS.PAGINATION_CHANGE, e => {
          this.pageOption = e.detail;
-         this.render();
+         if (this.page > this.#pagesCount) {
+            this.page = this.#pagesCount;
+         }
       });
-
-      window.addEventListener(this._event(EVENT_TYPES.FILTER_CHANGE, this.id), e => {
+      this.#bindListener(EVENTS.FILTER_CHANGE, e => {
          this.filterText = e.detail.toLowerCase();
-         this.render();
       });
-
-      window.addEventListener(this._event(EVENT_TYPES.NEXT_PAGE, this.id), () => {
+      this.#bindListener(EVENTS.NEXT_PAGE, () => {
          if (this.page >= this.#pagesCount) {
             return;
          }
          this.page++;
-         this.render();
       });
-
-      window.addEventListener(this._event(EVENT_TYPES.PREV_PAGE, this.id), () => {
+      this.#bindListener(EVENTS.PREV_PAGE, () => {
          if (this.page < 0) {
             return;
          }
          this.page--;
-         this.render();
       });
+      this.#bindListener(EVENTS.RENDER, this.render);
+   }
+
+   #bindListener(type, fn) {
+      window.addEventListener(this._event(type, this.id), fn);
    }
 
    #getRecords(records) {
@@ -74,10 +78,10 @@ export class App extends Component {
       return fillAggregatedData(filledMissingValues);
    }
 
-   render() {
+   render = () => {
       this.root.innerHTML = '';
       new TableFilter(this.filterText, this.id).render(this.root);
-      const pageText = `Page ${this.page + 1} of ${this.#pagesCount}`;
+      const pageText = `Page ${this.page} of ${this.#pagesCount}`;
       new Table(
          this.#currentRecords,
          this.prices,
@@ -88,5 +92,5 @@ export class App extends Component {
       new TablePagination(this.pageOption, this.page, this.#pagesCount, this.id).render(
          this.root
       );
-   }
+   };
 }

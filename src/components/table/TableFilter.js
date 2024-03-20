@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from '../../Component.js';
-import { DEBOUNCE_DELAY, EVENT_TYPES } from '../../constants.js';
+import { DEBOUNCE_DELAY, EVENTS } from '../../constants.js';
 import { debounce } from '../../helpers.js';
 
 export class TableFilter extends Component {
@@ -11,7 +11,7 @@ export class TableFilter extends Component {
       this.parentID = parentID;
    }
    #filterChanged = e => {
-      this._dispatch(EVENT_TYPES.FILTER_CHANGE, this.parentID, e.target.value);
+      this._dispatch(EVENTS.FILTER_CHANGE, this.parentID, e.target.value);
    };
    render(rootElement) {
       if (!rootElement) {

@@ -1,4 +1,7 @@
 'use strict';
+
+import { EVENTS } from './constants.js';
+
 export class Component {
    constructor() {
       this.id = Math.random().toString(36).substring(2, 10);
@@ -28,5 +31,6 @@ export class Component {
    }
    _dispatch(eventName, id, detail) {
       window.dispatchEvent(new CustomEvent(this._event(eventName, id), { detail }));
+      window.dispatchEvent(new Event(this._event(EVENTS.RENDER, id)));
    }
 }
