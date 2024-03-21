@@ -31,7 +31,8 @@ export class App extends Component {
    }
 
    get #pagesCount() {
-      return Math.ceil(this.#currentRecords.length / this.pageOption);
+      const array = this.filterText ? this.#currentRecords : this.records;
+      return Math.ceil(array.length / this.pageOption);
    }
 
    #addListeners() {
