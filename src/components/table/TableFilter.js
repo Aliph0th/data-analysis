@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component } from '../../Component.js';
+import { Component } from '../Component.js';
 import { DEBOUNCE_DELAY, EVENTS } from '../../constants.js';
 import { debounce } from '../../helpers.js';
 

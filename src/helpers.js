@@ -20,11 +20,10 @@ export const getDataForMetrics = (records, tableProducts) => {
 export const createTableHeaders = products => {
    const headers = [];
    products.forEach(product => {
-      headers.push(product + '(шт)');
-      headers.push(product + '(руб)');
+      headers.push(product + ' (шт)');
+      headers.push(product + ' (руб)');
    });
-   // FIXME:
-   return ['Компания', ...headers, 'Итого(руб)', 'Итого(% от продаж)'];
+   return ['Компания', ...headers, 'Итого (руб)', 'Итого (% от продаж)'];
 };
 
 export const transformRecords = (records, prices) => {

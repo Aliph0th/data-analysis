@@ -1,6 +1,6 @@
 'use strict';
 
-import { EVENTS } from './constants.js';
+import { EVENTS } from '../constants.js';
 
 export class Component {
    constructor() {

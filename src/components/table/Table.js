@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component } from '../../Component.js';
+import { Component } from '../Component.js';
 import { EMPTY_METRIC, METRICS_NAMES } from '../../constants.js';
 import {
    createTableHeaders,

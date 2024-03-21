@@ -103,3 +103,9 @@ body {
 .btn[disabled] {
    background-color: #a7abcc;
 }
+
+.muted {
+   text-align: center;
+   color: #ccc;
+   margin-top: 1rem;
+}

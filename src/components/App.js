@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component } from '../Component.js';
+import { Component } from './Component.js';
 import { Table } from './table/Table.js';
 import { TableFilter } from './table/TableFilter.js';
 import { TablePagination } from './table/TablePagination.js';
@@ -82,6 +82,16 @@ export class App extends Component {
    render = () => {
       this.root.innerHTML = '';
       new TableFilter(this.filterText, this.id).render(this.root);
+      if (!this.#currentRecords.length) {
+         this.root.appendChild(
+            this._createElement({
+               type: 'p',
+               innerText: 'No records found 😢',
+               classNames: ['muted']
+            })
+         );
+         return;
+      }
       const pageText = `Page ${this.page} of ${this.#pagesCount}`;
       new Table(
          this.#currentRecords,

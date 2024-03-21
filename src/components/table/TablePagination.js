@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component } from '../../Component.js';
+import { Component } from '../Component.js';
 import { EVENTS, RECORDS_PER_PAGE } from '../../constants.js';
 
 export class TablePagination extends Component {
