@@ -20,18 +20,22 @@ export class App extends Component {
       this.#addListeners();
    }
 
+   get #filteredRecords() {
+      return this.records.filter(record =>
+         record.company.toLowerCase().includes(this.filterText)
+      );
+   }
+
    get #currentRecords() {
       let start = (this.page - 1) * this.pageOption;
       if (start > this.records.length) {
          start = 0;
       }
-      return this.records
-         .filter(record => record.company.toLowerCase().includes(this.filterText))
-         .slice(start, start + this.pageOption);
+      return this.#filteredRecords.slice(start, start + this.pageOption);
    }
 
    get #pagesCount() {
-      const array = this.filterText ? this.#currentRecords : this.records;
+      const array = this.filterText ? this.#filteredRecords : this.records;
       return Math.ceil(array.length / this.pageOption);
    }
 
@@ -80,6 +84,7 @@ export class App extends Component {
    }
 
    render = () => {
+      console.log(this.filterText);
       this.root.innerHTML = '';
       new TableFilter(this.filterText, this.id).render(this.root);
       if (!this.#currentRecords.length) {
