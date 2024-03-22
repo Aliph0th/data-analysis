@@ -20,9 +20,14 @@ export class TableFilter extends Component {
       const input = this._createElement({
          type: 'input',
          classNames: ['control'],
-         attributes: { placeholder: 'Filter by company name', value: this.filter }
+         attributes: {
+            placeholder: 'Filter by company name',
+            value: this.filter,
+            autofocus: !!this.filter
+         }
       });
       rootElement.appendChild(input);
+      input.selectionStart = this.filter.length;
 
       input.addEventListener('input', debounce(this.#filterChanged, DEBOUNCE_DELAY));
    }

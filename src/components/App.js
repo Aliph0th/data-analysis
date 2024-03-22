@@ -47,6 +47,7 @@ export class App extends Component {
          }
       });
       this.#bindListener(EVENTS.FILTER_CHANGE, e => {
+         this.page = 1;
          this.filterText = e.detail.toLowerCase();
       });
       this.#bindListener(EVENTS.NEXT_PAGE, () => {
@@ -84,7 +85,6 @@ export class App extends Component {
    }
 
    render = () => {
-      console.log(this.filterText);
       this.root.innerHTML = '';
       new TableFilter(this.filterText, this.id).render(this.root);
       if (!this.#currentRecords.length) {

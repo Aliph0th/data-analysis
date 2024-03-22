@@ -22,7 +22,9 @@ export class Component {
          element.append(...children);
       }
       Object.entries(attributes).forEach(([key, value]) => {
-         element.setAttribute(key, value);
+         if (key && value) {
+            element.setAttribute(key, value);
+         }
       });
       return element;
    }

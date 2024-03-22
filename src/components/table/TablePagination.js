@@ -31,13 +31,13 @@ export class TablePagination extends Component {
          type: 'button',
          classNames: ['btn'],
          innerText: 'Back',
-         attributes: this.page === 1 ? { disabled: true } : {}
+         attributes: { disabled: this.page === 1 }
       });
       const btnNext = this._createElement({
          type: 'button',
          classNames: ['btn'],
          innerText: 'Next',
-         attributes: this.page === this.pagesCount ? { disabled: true } : {}
+         attributes: { disabled: this.page === this.pagesCount }
       });
       const selectCountEl = this._createElement({
          type: 'select',
@@ -47,7 +47,7 @@ export class TablePagination extends Component {
          const option = this._createElement({
             type: 'option',
             innerText: `${value} per page`,
-            attributes: this.option === value ? { value, selected: true } : { value }
+            attributes: { value, selected: this.option === value }
          });
          selectCountEl.appendChild(option);
       });
