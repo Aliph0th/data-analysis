@@ -12,13 +12,13 @@ export class TablePagination extends Component {
       this.parentID = parentID;
    }
 
-   #nextBtnPressed = () => {
+   nextBtnPressed = () => {
       this._dispatch(EVENTS.NEXT_PAGE, this.parentID);
    };
-   #backBtnPressed = () => {
+   backBtnPressed = () => {
       this._dispatch(EVENTS.PREV_PAGE, this.parentID);
    };
-   #paginationChanged = e => {
+   paginationChanged = e => {
       this._dispatch(EVENTS.PAGINATION_CHANGE, this.parentID, +e.target.value);
    };
 
@@ -59,8 +59,8 @@ export class TablePagination extends Component {
          })
       );
 
-      btnNext.addEventListener('click', this.#nextBtnPressed);
-      btnBack.addEventListener('click', this.#backBtnPressed);
-      selectCountEl.addEventListener('change', this.#paginationChanged);
+      btnNext.addEventListener('click', this.nextBtnPressed);
+      btnBack.addEventListener('click', this.backBtnPressed);
+      selectCountEl.addEventListener('change', this.paginationChanged);
    }
 }

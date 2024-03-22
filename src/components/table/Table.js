@@ -17,11 +17,11 @@ export class Table extends Component {
       this.products = products;
       this.records = records;
       this.tableHeaders = createTableHeaders(this.products);
-      this.metrics = this.#calculateMetrics();
+      this.metrics = this.calculateMetrics();
       this.pageText = pageText;
    }
 
-   #calculateMetrics() {
+   calculateMetrics() {
       const mappedData = getDataForMetrics(this.records, this.products);
       const maxMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
          accum[key] = Math.max(...value);
@@ -73,7 +73,7 @@ export class Table extends Component {
          })
       );
 
-      this.#createRow(this.tableHeaders, tHeadElement, 'th');
+      this.createRow(this.tableHeaders, tHeadElement, 'th');
 
       for (const record of this.records) {
          const rowData = this.products.reduce(
@@ -83,7 +83,7 @@ export class Table extends Component {
             },
             [record.company]
          );
-         this.#createRow(
+         this.createRow(
             [...rowData, record.totalMoney, record.purchasePercentage],
             tBodyElement
          );
@@ -94,7 +94,7 @@ export class Table extends Component {
          this.products.forEach(product => {
             rowData.push(data[product], EMPTY_METRIC);
          });
-         this.#createRow(
+         this.createRow(
             [...rowData, data.totalMoney, data.purchasePercentage],
             tBodyElement,
             'td',
@@ -103,16 +103,11 @@ export class Table extends Component {
       }
    }
 
-   #createRow(rowData, parent, cellType = 'td', isMetric = false) {
+   createRow(rowData, parent, type = 'td', isMetric = false) {
       const classNames = isMetric ? ['metric'] : [];
       const rowElement = this._createElement({ type: 'tr', classNames });
-      rowData.forEach(x => {
-         rowElement.appendChild(
-            this._createElement({
-               type: cellType,
-               innerText: x
-            })
-         );
+      rowData.forEach(innerText => {
+         rowElement.appendChild(this._createElement({ type, innerText }));
       });
       parent.appendChild(rowElement);
    }

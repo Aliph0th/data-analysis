@@ -10,7 +10,7 @@ export class TableFilter extends Component {
       this.filter = filter;
       this.parentID = parentID;
    }
-   #filterChanged = e => {
+   filterChanged = e => {
       this._dispatch(EVENTS.FILTER_CHANGE, this.parentID, e.target.value);
    };
    render(rootElement) {
@@ -22,13 +22,15 @@ export class TableFilter extends Component {
          classNames: ['control'],
          attributes: {
             placeholder: 'Filter by company name',
-            value: this.filter,
-            autofocus: !!this.filter
+            value: this.filter
          }
       });
       rootElement.appendChild(input);
-      input.selectionStart = this.filter.length;
+      if (!!this.filter) {
+         input.focus();
+         input.selectionStart = this.filter.length;
+      }
 
-      input.addEventListener('input', debounce(this.#filterChanged, DEBOUNCE_DELAY));
+      input.addEventListener('input', debounce(this.filterChanged, DEBOUNCE_DELAY));
    }
 }

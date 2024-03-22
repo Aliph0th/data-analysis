@@ -1,6 +1,4 @@
-export const formatNumber = n => {
-   return +n.toFixed(2);
-};
+export const formatNumber = n => +n.toFixed(2);
 
 export const getDataForMetrics = (records, tableProducts) => {
    return records.reduce(
