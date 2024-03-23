@@ -10,19 +10,22 @@ import {
 } from '../../helpers.js';
 
 export class Table extends Component {
-   constructor(records, prices, products, pageText, parentID) {
+   #products;
+   #records;
+   #tableHeaders;
+   #metrics;
+   #pageText;
+   constructor(records, products, pageText) {
       super();
-      this.parentID = parentID;
-      this.prices = prices;
-      this.products = products;
-      this.records = records;
-      this.tableHeaders = createTableHeaders(this.products);
-      this.metrics = this.calculateMetrics();
-      this.pageText = pageText;
+      this.#products = products;
+      this.#records = records;
+      this.#tableHeaders = createTableHeaders(products);
+      this.#metrics = this.#calculateMetrics();
+      this.#pageText = pageText;
    }
 
-   calculateMetrics() {
-      const mappedData = getDataForMetrics(this.records, this.products);
+   #calculateMetrics = () => {
+      const mappedData = getDataForMetrics(this.#records, this.#products);
       const maxMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
          accum[key] = Math.max(...value);
          return accum;
@@ -32,7 +35,7 @@ export class Table extends Component {
          return accum;
       }, {});
       const avgMetric = Object.entries(mappedData).reduce((accum, [key]) => {
-         accum[key] = formatNumber(sumMetric[key] / this.records.length);
+         accum[key] = formatNumber(sumMetric[key] / this.#records.length);
          return accum;
       }, {});
       const medianMetric = Object.entries(mappedData).reduce((accum, [key, value]) => {
@@ -46,9 +49,9 @@ export class Table extends Component {
          { name: METRICS_NAMES.AVG, data: avgMetric },
          { name: METRICS_NAMES.MEDIAN, data: medianMetric }
       ];
-   }
+   };
 
-   render(rootElement) {
+   render = rootElement => {
       if (!rootElement) {
          throw new Error('root element is not specified');
       }
@@ -64,7 +67,7 @@ export class Table extends Component {
          this._createElement({
             type: 'p',
             classNames: ['page_title'],
-            innerText: this.pageText
+            innerText: this.#pageText
          }),
          this._createElement({
             type: 'div',
@@ -73,42 +76,42 @@ export class Table extends Component {
          })
       );
 
-      this.createRow(this.tableHeaders, tHeadElement, 'th');
+      this.#createRow(this.#tableHeaders, tHeadElement, 'th');
 
-      for (const record of this.records) {
-         const rowData = this.products.reduce(
+      for (const record of this.#records) {
+         const rowData = this.#products.reduce(
             (accum, product) => {
                accum.push(...Object.values(record.products[product]));
                return accum;
             },
             [record.company]
          );
-         this.createRow(
+         this.#createRow(
             [...rowData, record.totalMoney, record.purchasePercentage],
             tBodyElement
          );
       }
 
-      for (const { name, data } of this.metrics) {
+      for (const { name, data } of this.#metrics) {
          const rowData = [name];
-         this.products.forEach(product => {
+         this.#products.forEach(product => {
             rowData.push(data[product], EMPTY_METRIC);
          });
-         this.createRow(
+         this.#createRow(
             [...rowData, data.totalMoney, data.purchasePercentage],
             tBodyElement,
             'td',
             true
          );
       }
-   }
+   };
 
-   createRow(rowData, parent, type = 'td', isMetric = false) {
+   #createRow = (rowData, parent, type = 'td', isMetric = false) => {
       const classNames = isMetric ? ['metric'] : [];
       const rowElement = this._createElement({ type: 'tr', classNames });
       rowData.forEach(innerText => {
          rowElement.appendChild(this._createElement({ type, innerText }));
       });
       parent.appendChild(rowElement);
-   }
+   };
 }

@@ -3,9 +3,7 @@
 import { EVENTS } from '../constants.js';
 
 export class Component {
-   constructor() {
-      this.id = Math.random().toString(36).substring(2, 10);
-   }
+   id = Math.random().toString(36).substring(2, 10);
    _createElement({
       type,
       classNames = [],
@@ -31,8 +29,8 @@ export class Component {
    _event(name, id) {
       return `${name}_${id}`;
    }
-   _dispatch(eventName, id, detail) {
+   _dispatch = (eventName, id, detail) => {
       window.dispatchEvent(new CustomEvent(this._event(eventName, id), { detail }));
       window.dispatchEvent(new Event(this._event(EVENTS.RENDER, id)));
-   }
+   };
 }

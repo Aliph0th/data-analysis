@@ -5,15 +5,17 @@ import { DEBOUNCE_DELAY, EVENTS } from '../../constants.js';
 import { debounce } from '../../helpers.js';
 
 export class TableFilter extends Component {
+   #filter;
+   #parentID;
    constructor(filter, parentID) {
       super();
-      this.filter = filter;
-      this.parentID = parentID;
+      this.#filter = filter;
+      this.#parentID = parentID;
    }
-   filterChanged = e => {
-      this._dispatch(EVENTS.FILTER_CHANGE, this.parentID, e.target.value);
+   #filterChanged = e => {
+      this._dispatch(EVENTS.FILTER_CHANGE, this.#parentID, e.target.value);
    };
-   render(rootElement) {
+   render = rootElement => {
       if (!rootElement) {
          throw new Error('root element is not specified');
       }
@@ -22,15 +24,15 @@ export class TableFilter extends Component {
          classNames: ['control'],
          attributes: {
             placeholder: 'Filter by company name',
-            value: this.filter
+            value: this.#filter
          }
       });
       rootElement.appendChild(input);
-      if (!!this.filter) {
+      if (!!this.#filter) {
          input.focus();
-         input.selectionStart = this.filter.length;
+         input.selectionStart = this.#filter.length;
       }
 
-      input.addEventListener('input', debounce(this.filterChanged, DEBOUNCE_DELAY));
-   }
+      input.addEventListener('input', debounce(this.#filterChanged, DEBOUNCE_DELAY));
+   };
 }
